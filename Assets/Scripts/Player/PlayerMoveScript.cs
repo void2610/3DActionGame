@@ -19,27 +19,23 @@ public class PlayerMoveScript : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		rb.velocity = Vector3.zero;
+
 		if (Input.GetKey(KeyCode.W))
 		{
-			rb.velocity = Vector3.forward * speed;
+			rb.velocity += Vector3.forward * speed;
 		}
-		else if (Input.GetKey(KeyCode.S))
+		if (Input.GetKey(KeyCode.S))
 		{
-			rb.velocity = Vector3.back * speed;
+			rb.velocity += Vector3.back * speed;
 		}
-		else if (Input.GetKey(KeyCode.A))
+		if (Input.GetKey(KeyCode.A))
 		{
-			rb.velocity = Vector3.left * speed;
+			rb.velocity += Vector3.left * speed;
 		}
-		else if (Input.GetKey(KeyCode.D))
+		if (Input.GetKey(KeyCode.D))
 		{
-			rb.velocity = Vector3.right * speed;
+			rb.velocity += Vector3.right * speed;
 		}
-		else
-		{
-			rb.velocity = Vector3.zero;
-		}
-
-
 	}
 }
