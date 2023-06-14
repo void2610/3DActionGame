@@ -12,11 +12,6 @@ public class CameraMoveScript : MonoBehaviour
 
 	void Start()
 	{
-		if (Target == null)
-		{
-			Debug.LogError("ターゲットが設定されていない");
-			Application.Quit();
-		}
 	}
 
 	void FixedUpdate()

@@ -4,38 +4,49 @@ using UnityEngine;
 
 public class PlayerMoveScript : MonoBehaviour
 {
-	[SerializeField]
 	private GameObject player;
+	[SerializeField]
+	private GameObject camera;
 	private Rigidbody rb;
 
 	[SerializeField]
 	private float speed = 10f;
+	private Vector3 latestPos;
+	private Vector3 moving;
+	private float direction;
+
+
+	void MovementControll()
+	{
+		//斜め移動と縦横の移動を同じ速度にするためにVector3をNormalize()する。
+		moving = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		moving.Normalize();
+		moving = moving * speed;
+		//カメラの向きに合わせて移動方向を変える
+		moving = Quaternion.Euler(0, direction, 0) * moving;
+	}
+
+	void Movement()
+	{
+		rb.velocity = moving;
+	}
+
+
 	void Start()
 	{
 		player = this.gameObject;
 		rb = player.GetComponent<Rigidbody>();
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
-		rb.velocity = Vector3.zero;
+		//カメラの向きを取得
+		direction = camera.transform.eulerAngles.y;
+	}
 
-		if (Input.GetKey(KeyCode.W))
-		{
-			rb.velocity += Vector3.forward * speed;
-		}
-		if (Input.GetKey(KeyCode.S))
-		{
-			rb.velocity += Vector3.back * speed;
-		}
-		if (Input.GetKey(KeyCode.A))
-		{
-			rb.velocity += Vector3.left * speed;
-		}
-		if (Input.GetKey(KeyCode.D))
-		{
-			rb.velocity += Vector3.right * speed;
-		}
+	void FixedUpdate()
+	{
+		MovementControll();
+		Movement();
 	}
 }
