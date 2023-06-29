@@ -4,16 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	private GameObject player;
 	[SerializeField]
 	private GameObject camera;
 	private Rigidbody rb;
-
-	[SerializeField]
 	private float speed = 13f;
-	private Vector3 latestPos;
-
-	private float direction;
 	public bool isGrounded = true;
 
 	public float getCameraDirection()
@@ -29,10 +23,6 @@ public class Player : MonoBehaviour
 		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
 	}
 
-	private void ChangePlayerDirection()
-	{
-
-	}
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
