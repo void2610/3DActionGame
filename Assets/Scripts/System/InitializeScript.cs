@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class InitializeScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        Cursor.visible = false;
-    }
+	// Start is called before the first frame update
+	void Start()
+	{
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
+	// Update is called once per frame
+	void Update()
+	{
 
-    }
+	}
 }
