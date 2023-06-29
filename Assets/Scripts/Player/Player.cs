@@ -53,10 +53,10 @@ public class Player : MonoBehaviour
 		{
 			rb.velocity = getMoveDirection() * speed;
 			// 移動方向を向く
-			if (getMoveDirection() != Vector3.zero)
+			if (rb.velocity.magnitude > 0.1f)
 			{
-				Quaternion targetRotation = Quaternion.LookRotation(getMoveDirection());
-				//transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2f);
+				this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.eulerAngles, getMoveDirection(), 0.2f));
+				this.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
 			}
 		}
 	}
