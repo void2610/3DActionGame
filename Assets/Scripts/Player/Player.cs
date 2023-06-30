@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 	private Rigidbody rb;
 	private float speed = 13f;
 	public bool isGrounded = true;
+	public float targetAngle;
 
 	public float getCameraDirection()
 	{
@@ -23,6 +24,24 @@ public class Player : MonoBehaviour
 		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
 	}
 
+	public void CheckInput()
+	{
+		int forward = 0;
+		int right = 0;
+		if (Input.GetKey(KeyCode.W))
+			forward = 1;
+		else if (Input.GetKey(KeyCode.S))
+			forward = -1;
+		if (Input.GetKey(KeyCode.A))
+			right = -1;
+		else if (Input.GetKey(KeyCode.D))
+			right = 1;
+		if (forward != 0 || right != 0)
+		{
+			targetAngle = camera.transform.rotation.eulerAngles.y + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
+		}
+	}
+
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -32,7 +51,7 @@ public class Player : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
+		CheckInput();
 	}
 
 	//地上ではキー操作方向を向く
@@ -41,13 +60,15 @@ public class Player : MonoBehaviour
 	{
 		if (isGrounded)
 		{
+			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
+
 			rb.velocity = getMoveDirection() * speed;
-			// 移動方向を向く
-			if (rb.velocity.magnitude > 0.1f)
-			{
-				this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.eulerAngles, getMoveDirection(), 0.2f));
-				this.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
-			}
+			// // 移動方向を向く
+			// if (rb.velocity.magnitude > 0.1f)
+			// {
+			// 	this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.eulerAngles, getMoveDirection(), 0.2f));
+			// 	this.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
+			// }
 		}
 	}
 }
