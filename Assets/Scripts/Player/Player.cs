@@ -20,7 +20,8 @@ public class Player : MonoBehaviour
 	{
 		Vector3 cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
 		Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-		Vector3 targetDirection = cameraForward * moveDirection.z + camera.transform.right * moveDirection.x;
+		//Vector3 targetDirection = cameraForward * moveDirection.z + camera.transform.right * moveDirection.x;
+		Vector3 targetDirection = targetAngle * Vector3.forward;
 		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
 	}
 
@@ -61,14 +62,7 @@ public class Player : MonoBehaviour
 		if (isGrounded)
 		{
 			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
-
 			rb.velocity = getMoveDirection() * speed;
-			// // 移動方向を向く
-			// if (rb.velocity.magnitude > 0.1f)
-			// {
-			// 	this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.eulerAngles, getMoveDirection(), 0.2f));
-			// 	this.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
-			// }
 		}
 	}
 }
