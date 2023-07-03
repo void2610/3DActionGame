@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private GameObject camera;
 	private Rigidbody rb;
-	private float speed = 13f;
+	private const float SPEED = 13f;
+	private const float AIRSPEED = 8;
 	private int forward = 0;
 	private int right = 0;
 
@@ -37,11 +38,11 @@ public class Player : MonoBehaviour
 	{
 		if (forward != 0 || right != 0)
 		{
-			return targetAngle = camera.transform.rotation.eulerAngles.y + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
+			return targetAngle = getCameraDirection() + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
 		}
 		else
 		{
-			return targetAngle = camera.transform.rotation.eulerAngles.y;
+			return targetAngle = getCameraDirection();
 		}
 	}
 
@@ -73,7 +74,35 @@ public class Player : MonoBehaviour
 		Vector3 cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
 		Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 		Vector3 targetDirection = cameraForward * moveDirection.z + camera.transform.right * moveDirection.x;
-		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
+		return Vector3.Lerp(rb.velocity / SPEED, targetDirection, 0.2f);
+	}
+
+	private void InAirMovement()
+	{
+		if (Input.GetKey(KeyCode.Space))
+		{
+			rb.AddForce(Vector3.up * AIRSPEED * 1.6f);
+		}
+		if (Input.GetKey(KeyCode.LeftShift))
+		{
+			rb.AddForce(Vector3.down * AIRSPEED);
+		}
+		if (Input.GetKey(KeyCode.W))
+		{
+			rb.AddForce(this.transform.forward * AIRSPEED);
+		}
+		if (Input.GetKey(KeyCode.S))
+		{
+			rb.AddForce(this.transform.forward * -AIRSPEED);
+		}
+		if (Input.GetKey(KeyCode.A))
+		{
+			rb.AddForce(this.transform.right * -AIRSPEED);
+		}
+		if (Input.GetKey(KeyCode.D))
+		{
+			rb.AddForce(this.transform.right * AIRSPEED);
+		}
 	}
 
 	private void Jump()
@@ -115,20 +144,24 @@ public class Player : MonoBehaviour
 			if (forward == 1)
 			{
 				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetTargetAngle(), 0f), Time.deltaTime * 10f);
-				rb.velocity = getMoveDirection() * speed;
+				rb.velocity = getMoveDirection() * SPEED;
 			}
 			else
 			{
-				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, camera.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 5f);
-				rb.velocity = getMoveDirection() * speed * 0.85f;
+				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, getCameraDirection(), 0f), Time.deltaTime * 5f);
+				rb.velocity = getMoveDirection() * SPEED * 0.85f;
 			}
-
 
 
 			if (Input.GetKey(KeyCode.Space))
 			{
 				Jump();
 			}
+		}
+		else
+		{
+			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, getCameraDirection(), 0f), Time.deltaTime * 10f);
+			InAirMovement();
 		}
 	}
 }
