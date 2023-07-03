@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+	public bool isGrounded = true;
+	public float targetAngle;
 	[SerializeField]
 	private GameObject camera;
 	private Rigidbody rb;
 	private float speed = 13f;
-	public bool isGrounded = true;
-	public float targetAngle;
+	private int forward = 0;
+	private int right = 0;
+
 
 	public float getCameraDirection()
 	{
@@ -18,8 +21,8 @@ public class Player : MonoBehaviour
 
 	public void CheckInput()
 	{
-		int forward = 0;
-		int right = 0;
+		forward = 0;
+		right = 0;
 		if (Input.GetKey(KeyCode.W))
 			forward = 1;
 		else if (Input.GetKey(KeyCode.S))
@@ -28,9 +31,17 @@ public class Player : MonoBehaviour
 			right = -1;
 		else if (Input.GetKey(KeyCode.D))
 			right = 1;
+	}
+
+	public float GetTargetAngle()
+	{
 		if (forward != 0 || right != 0)
 		{
-			targetAngle = camera.transform.rotation.eulerAngles.y + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
+			return targetAngle = camera.transform.rotation.eulerAngles.y + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
+		}
+		else
+		{
+			return targetAngle = camera.transform.rotation.eulerAngles.y;
 		}
 	}
 
@@ -101,8 +112,18 @@ public class Player : MonoBehaviour
 	{
 		if (isGrounded)
 		{
-			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
-			rb.velocity = getMoveDirection() * speed;
+			if (forward == 1)
+			{
+				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetTargetAngle(), 0f), Time.deltaTime * 10f);
+				rb.velocity = getMoveDirection() * speed;
+			}
+			else
+			{
+				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, camera.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 5f);
+				rb.velocity = getMoveDirection() * speed * 0.85f;
+			}
+
+
 
 			if (Input.GetKey(KeyCode.Space))
 			{
