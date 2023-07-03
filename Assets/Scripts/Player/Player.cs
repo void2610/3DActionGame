@@ -16,14 +16,6 @@ public class Player : MonoBehaviour
 		return camera.transform.eulerAngles.y;
 	}
 
-	private Vector3 getMoveDirection()
-	{
-		Vector3 cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
-		Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-		Vector3 targetDirection = cameraForward * moveDirection.z + camera.transform.right * moveDirection.x;
-		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
-	}
-
 	public void CheckInput()
 	{
 		int forward = 0;
@@ -64,6 +56,23 @@ public class Player : MonoBehaviour
 		return CheckRaycastIgnoreTriggers(this.transform.position, this.transform.up * -1f, 1f);
 	}
 
+
+	public Vector3 getMoveDirection()
+	{
+		Vector3 cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
+		Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+		Vector3 targetDirection = cameraForward * moveDirection.z + camera.transform.right * moveDirection.x;
+		return Vector3.Lerp(rb.velocity / speed, targetDirection, 0.2f);
+	}
+
+	private void Jump()
+	{
+		if (CheckGround())
+		{
+			rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+		}
+	}
+
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -73,7 +82,15 @@ public class Player : MonoBehaviour
 	void Update()
 	{
 		CheckInput();
-		Debug.Log(CheckGround());
+		if (CheckGround())
+		{
+			isGrounded = true;
+		}
+		else
+		{
+			isGrounded = false;
+		}
+
 	}
 
 
@@ -86,6 +103,11 @@ public class Player : MonoBehaviour
 		{
 			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
 			rb.velocity = getMoveDirection() * speed;
+
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				Jump();
+			}
 		}
 	}
 }
