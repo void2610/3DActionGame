@@ -48,11 +48,12 @@ public class Player : MonoBehaviour
 		rb.velocity = Vector3.zero;
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		CheckInput();
 	}
+
+
 
 	//地上ではキー操作方向を向く
 	//空中ではカメラ方向を向く
@@ -61,14 +62,7 @@ public class Player : MonoBehaviour
 		if (isGrounded)
 		{
 			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
-
 			rb.velocity = getMoveDirection() * speed;
-			// // 移動方向を向く
-			// if (rb.velocity.magnitude > 0.1f)
-			// {
-			// 	this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.eulerAngles, getMoveDirection(), 0.2f));
-			// 	this.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
-			// }
 		}
 	}
 }
