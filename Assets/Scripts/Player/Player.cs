@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
 			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0f), Time.deltaTime * 10f);
 			rb.velocity = getMoveDirection() * speed;
 
-			if (Input.GetKeyDown(KeyCode.Space))
+			if (Input.GetKey(KeyCode.Space))
 			{
 				Jump();
 			}
