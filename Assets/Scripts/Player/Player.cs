@@ -42,6 +42,28 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	public virtual RaycastHit? RaycastIgnoreTriggers(Vector3 origin, Vector3 direction, float distance)
+	{
+		var hits = Physics.RaycastAll(origin, direction, distance);
+		foreach (var hit in hits)
+		{
+			if (!hit.collider.isTrigger)
+				return hit;
+		}
+		return null;
+	}
+
+	public bool CheckRaycastIgnoreTriggers(Vector3 origin, Vector3 direction, float distance)
+	{
+		return RaycastIgnoreTriggers(origin, direction, distance).HasValue;
+	}
+
+
+	public bool CheckGround()
+	{
+		return CheckRaycastIgnoreTriggers(this.transform.position, this.transform.up * -1f, 1f);
+	}
+
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -51,6 +73,7 @@ public class Player : MonoBehaviour
 	void Update()
 	{
 		CheckInput();
+		Debug.Log(CheckGround());
 	}
 
 
