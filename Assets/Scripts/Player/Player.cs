@@ -179,7 +179,6 @@ public class Player : MonoBehaviour
 		{
 			rightHook.SetHook(getHookPoint());
 		}
-
 	}
 
 
