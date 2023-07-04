@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
 	public Vector3 getHookPoint()
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, 100f))
+		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 100f))
 		{
 			return hit.point;
 		}
