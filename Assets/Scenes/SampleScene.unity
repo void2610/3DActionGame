@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 80384882}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LookPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,11 +413,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b873a7ba5e89242a1981def7e46af6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Target: {fileID: 1028064377}
-  DistanceToPlayerM: 16
-  SlideDistanceM: 0
-  HeightM: 1.2
-  RotationSensitivity: 260
+  target: {fileID: 1028064377}
+  distanceToPlayerM: 16
+  slideDistanceM: 0
+  heightM: 1.2
+  rotationSensitivity: 260
 --- !u!1 &992230894
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +526,7 @@ GameObject:
   - component: {fileID: 1028064377}
   - component: {fileID: 1028064379}
   - component: {fileID: 1028064380}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1258,7 +1258,7 @@ GameObject:
   - component: {fileID: 1930206362}
   - component: {fileID: 1930206361}
   - component: {fileID: 1930206360}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PlayerBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
