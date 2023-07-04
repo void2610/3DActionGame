@@ -13,14 +13,30 @@ public class Player : MonoBehaviour
 	private const float AIRSPEED = 8;
 	private int forward = 0;
 	private int right = 0;
-
+	private bool rightHookInput = false;
+	private bool leftHookInput = false;
+	private Hook leftHook;
+	private Hook rightHook;
 
 	public float getCameraDirection()
 	{
 		return camera.transform.eulerAngles.y;
 	}
 
-	public void CheckInput()
+	public Vector3 getHookPoint()
+	{
+		RaycastHit hit;
+		if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, 100f))
+		{
+			return hit.point;
+		}
+		else
+		{
+			return camera.transform.position + camera.transform.forward * 100f;
+		}
+	}
+
+	public void CheckMoveInput()
 	{
 		forward = 0;
 		right = 0;
@@ -32,6 +48,26 @@ public class Player : MonoBehaviour
 			right = -1;
 		else if (Input.GetKey(KeyCode.D))
 			right = 1;
+	}
+
+	public void CheckHookInput()
+	{
+		if (Input.GetKey(KeyCode.Q))
+		{
+			leftHookInput = true;
+		}
+		else
+		{
+			leftHookInput = false;
+		}
+		if (Input.GetKey(KeyCode.E))
+		{
+			rightHookInput = true;
+		}
+		else
+		{
+			rightHookInput = false;
+		}
 	}
 
 	public float GetTargetAngle()
@@ -115,13 +151,17 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
+		leftHook = Hook.CreateHook(this.gameObject, true);
+		rightHook = Hook.CreateHook(this.gameObject, false);
+
 		rb = GetComponent<Rigidbody>();
 		rb.velocity = Vector3.zero;
 	}
 
 	void Update()
 	{
-		CheckInput();
+		CheckMoveInput();
+		CheckHookInput();
 		if (CheckGround())
 		{
 			isGrounded = true;
@@ -129,6 +169,15 @@ public class Player : MonoBehaviour
 		else
 		{
 			isGrounded = false;
+		}
+
+		if (leftHookInput)
+		{
+			leftHook.SetHook(getHookPoint());
+		}
+		if (rightHookInput)
+		{
+			rightHook.SetHook(getHookPoint());
 		}
 
 	}

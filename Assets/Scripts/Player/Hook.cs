@@ -23,16 +23,29 @@ public class Hook : MonoBehaviour
 	public const float tension = 1f;
 	public const float maxDistance = 10f;
 
+	public LineRenderer lineRenderer;
 
-	public static Hook CreateHook(GameObject owner, Vector3 position, bool isLeft)
+
+	public static Hook CreateHook(GameObject owner, bool isLeft)
 	{
 		GameObject obj = new GameObject();
 		obj.transform.SetParent(owner.transform);
 		Hook hook = obj.AddComponent<Hook>();
+		hook.lineRenderer = obj.AddComponent<LineRenderer>();
+		hook.lineRenderer.startWidth = 0.1f;
+		hook.lineRenderer.endWidth = 0.1f;
+		hook.lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+		hook.lineRenderer.startColor = Color.black;
+		hook.lineRenderer.endColor = Color.black;
 		hook.owner = owner;
-		hook.position = position;
 		hook.isLeft = isLeft;
 		return hook;
+	}
+
+	public void SetHook(Vector3 position)
+	{
+		this.position = position;
+		state = HookState.Hooked;
 	}
 
 	void Start()
@@ -45,13 +58,15 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-			break;
+				break;
 			case HookState.Hooking:
-			break;
+				break;
 			case HookState.Hooked:
-			break;
+				lineRenderer.SetPosition(0, owner.transform.position);
+				lineRenderer.SetPosition(1, this.position);
+				break;
 			default:
-			break;
+				break;
 		}
 	}
 
@@ -60,13 +75,13 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-			break;
+				break;
 			case HookState.Hooking:
-			break;
+				break;
 			case HookState.Hooked:
-			break;
+				break;
 			default:
-			break;
+				break;
 		}
 	}
 
