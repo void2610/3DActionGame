@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private GameObject camera;
 	[SerializeField]
+	private ParticleSystem particleSystem;
+	[SerializeField]
 	private Hook leftHook;
 	[SerializeField]
 	private Hook rightHook;
@@ -125,7 +127,9 @@ public class Player : MonoBehaviour
 		foreach (var hit in hits)
 		{
 			if (!hit.collider.isTrigger)
+			{
 				return hit;
+			}
 		}
 		return null;
 	}
@@ -138,7 +142,7 @@ public class Player : MonoBehaviour
 
 	public bool CheckGround()
 	{
-		return CheckRaycastIgnoreTriggers(this.transform.position, this.transform.up * -1f, 1f);
+		return CheckRaycastIgnoreTriggers(this.transform.position, this.transform.up * -1f, 1.1f);
 	}
 
 
@@ -152,29 +156,46 @@ public class Player : MonoBehaviour
 
 	private void InAirMovement()
 	{
+		Vector3 particleDirection = Vector3.zero;
 		if (Input.GetKey(KeyCode.Space))
 		{
 			rb.AddForce(Vector3.up * AIRSPEED);
+			particleDirection += Vector3.up;
 		}
 		if (Input.GetKey(KeyCode.LeftShift))
 		{
 			rb.AddForce(Vector3.down * AIRSPEED);
+			particleDirection += Vector3.down;
 		}
 		if (Input.GetKey(KeyCode.W))
 		{
 			rb.AddForce(this.transform.forward * AIRSPEED);
+			particleDirection += this.transform.forward;
 		}
 		if (Input.GetKey(KeyCode.S))
 		{
 			rb.AddForce(this.transform.forward * -AIRSPEED);
+			particleDirection += this.transform.forward * -1f;
 		}
 		if (Input.GetKey(KeyCode.A))
 		{
 			rb.AddForce(this.transform.right * -AIRSPEED);
+			particleDirection += this.transform.right * -1f;
 		}
 		if (Input.GetKey(KeyCode.D))
 		{
 			rb.AddForce(this.transform.right * AIRSPEED);
+			particleDirection += this.transform.right;
+		}
+
+		if (particleDirection != Vector3.zero)
+		{
+			particleSystem.enableEmission = true;
+			particleSystem.transform.rotation = Quaternion.LookRotation(particleDirection);
+		}
+		else
+		{
+			particleSystem.enableEmission = false;
 		}
 	}
 
@@ -231,6 +252,7 @@ public class Player : MonoBehaviour
 	{
 		if (isGrounded)
 		{
+			particleSystem.enableEmission = false;
 			if (forward == 1)
 			{
 				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetTargetAngle(), 0f), Time.deltaTime * 10f);
@@ -241,7 +263,6 @@ public class Player : MonoBehaviour
 				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, getCameraDirection(), 0f), Time.deltaTime * 5f);
 				rb.velocity = getMoveDirection() * SPEED * 0.85f;
 			}
-
 
 			if (Input.GetKey(KeyCode.Space))
 			{
