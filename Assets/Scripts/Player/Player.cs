@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	public bool isGrounded = true;
-	public float targetAngle;
 	[SerializeField]
 	private GameObject camera;
 	[SerializeField]
@@ -16,9 +14,14 @@ public class Player : MonoBehaviour
 	private Hook rightHook;
 	[SerializeField]
 	private LayerMask hookableLayer;
+
+
 	private Rigidbody rb;
 	private const float SPEED = 13f;
 	private const float AIRSPEED = 9;
+	private const float MAXDISTANCE = 150f;
+	private bool isGrounded = true;
+	private float targetAngle;
 	private int forward = 0;
 	private int right = 0;
 	private bool rightHookInputDown = false;
@@ -37,7 +40,7 @@ public class Player : MonoBehaviour
 	public Vector3 getHookPoint()
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 100f, hookableLayer))
+		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, MAXDISTANCE, hookableLayer))
 		{
 			return hit.point;
 		}
@@ -65,40 +68,26 @@ public class Player : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			leftHookInputUp = false;
-			leftHookInput = false;
-			leftHookInputDown = true;
+			leftHook.SetHook(getHookPoint(), this.gameObject);
 		}
 		else if (Input.GetKey(KeyCode.Q))
 		{
-			leftHookInputUp = false;
-			leftHookInput = true;
-			leftHookInputDown = false;
 		}
 		else if (Input.GetKeyUp(KeyCode.Q))
 		{
-			leftHookInputUp = true;
-			leftHookInput = false;
-			leftHookInputDown = false;
+			leftHook.DisableHook();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E))
 		{
-			rightHookInputUp = false;
-			rightHookInput = false;
-			rightHookInputDown = true;
+			rightHook.SetHook(getHookPoint(), this.gameObject);
 		}
 		else if (Input.GetKey(KeyCode.E))
 		{
-			rightHookInputUp = false;
-			rightHookInput = true;
-			rightHookInputDown = false;
 		}
 		else if (Input.GetKeyUp(KeyCode.E))
 		{
-			rightHookInputUp = true;
-			rightHookInput = false;
-			rightHookInputDown = false;
+			rightHook.DisableHook();
 		}
 
 		//マウスホイールでのフックの長さ調整
@@ -106,6 +95,11 @@ public class Player : MonoBehaviour
 		{
 			leftHook.LilleWire(10f);
 			rightHook.LilleWire(10f);
+		}
+		else if (Input.GetAxis("Mouse ScrollWheel") > 0)
+		{
+			leftHook.LilleWire(-10f);
+			rightHook.LilleWire(-10f);
 		}
 	}
 
@@ -224,23 +218,6 @@ public class Player : MonoBehaviour
 		else
 		{
 			isGrounded = false;
-		}
-
-		if (leftHookInputDown)
-		{
-			leftHook.SetHook(getHookPoint(), this.gameObject);
-		}
-		else if (leftHookInputUp)
-		{
-			leftHook.DisableHook();
-		}
-		if (rightHookInputDown)
-		{
-			rightHook.SetHook(getHookPoint(), this.gameObject);
-		}
-		else if (rightHookInputUp)
-		{
-			rightHook.DisableHook();
 		}
 	}
 

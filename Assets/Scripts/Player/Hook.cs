@@ -58,7 +58,6 @@ public class Hook : MonoBehaviour
 		if (joint.maxDistance - lilleLength > 0)
 		{
 			joint.maxDistance -= lilleLength;
-			Debug.Log("LilleWire: " + joint.maxDistance);
 		}
 	}
 
