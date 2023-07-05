@@ -4,38 +4,42 @@ using UnityEngine;
 
 public class CameraMoveScript : MonoBehaviour
 {
-	public Transform target;
+	public GameObject target;
 	public float distanceToPlayerM = 2f;    // カメラとプレイヤーとの距離[m]
 	public float slideDistanceM = 0f;       // カメラを横にスライドさせる；プラスの時右へ，マイナスの時左へ[m]
 	public float heightM = 1.2f;            // 注視点の高さ[m]
 	public float rotationSensitivity = 100f;// 感度
 
 	private float floorHeight = 0.0f;
-	private float minDistance = 0.8f;
+	private float minDistance = 3.8f;
 
 	private RaycastHit hit;
+	private RaycastHit[] hitList;
+	private RaycastHit[] oldHitList = { new RaycastHit() };
 
 	private Vector3 position;
 
 	private float distance;
 
-	private int mask;
+	private int playerMask;
+	private Color playerColor;
 
 	void Start()
 	{
 		position = target.transform.position - this.transform.position;
 		distance = Vector3.Distance(target.transform.position, transform.position);
-		mask = ~(1 << LayerMask.NameToLayer("Player"));
+		playerMask = ~(1 << LayerMask.NameToLayer("Player"));
+		playerColor = target.GetComponent<Renderer>().material.color;
 	}
 
 	void FixedUpdate()
 	{
-		floorHeight = target.position.y + 1;
+		floorHeight = target.transform.position.y + 1;
 
 		var rotX = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSensitivity;
 		var rotY = -Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSensitivity;
 
-		var lookAt = target.position + Vector3.up * heightM;
+		var lookAt = target.transform.position + Vector3.up * heightM;
 
 		// 回転
 		transform.RotateAround(lookAt, Vector3.up, rotX);
@@ -59,37 +63,37 @@ public class CameraMoveScript : MonoBehaviour
 		// カメラを横にずらして中央を開ける
 		transform.position = transform.position + transform.right * slideDistanceM;
 
-		// カメラの高さを調整
-		if (transform.position.y < floorHeight)
+		// //めり込んだオブジェクトを透過する
+		// foreach (RaycastHit hit in oldHitList)
+		// {
+		// 	if (hit.collider != null)
+		// 	{
+		// 		hit.collider.gameObject.GetComponent<Renderer>().enabled = true;
+		// 	}
+		// }
+
+		// hitList = Physics.RaycastAll(lookAt, transform.position - lookAt, distanceToPlayerM, playerMask);
+		// foreach (RaycastHit hit in hitList)
+		// {
+		// 	hit.collider.gameObject.GetComponent<Renderer>().enabled = false;
+		// }
+
+
+		//めり込みそうなオブジェクトの手前にカメラを移動させる
+		if (Physics.Linecast(lookAt, transform.position, out hit, playerMask))
 		{
-			float diff = floorHeight - transform.position.y;
-
-			if (diff > minDistance)
+			//lookAtに近づきすぎたらtargetを半透明にする
+			if (Vector3.Distance(lookAt, hit.point) < minDistance)
 			{
-				diff = minDistance;
+				Debug.Log("近づきすぎ");
+				target.GetComponent<Renderer>().material.color = new Color(playerColor.r, playerColor.g, playerColor.b, 0.2f);
 			}
-			Debug.Log(diff);
-			//diffが大きくなればなるほどtargetに近づく
-			float x = target.position.x + (transform.position.x - target.position.x) * (1 - diff);
-			float z = target.position.z + (transform.position.z - target.position.z) * (1 - diff);
-
-			transform.position = new Vector3(x, floorHeight, z);
+			else
+			{
+				target.GetComponent<Renderer>().material.color = playerColor;
+			}
+			transform.position = hit.point;
 		}
-
-
-
-		// //めり込み防止
-		// if (Physics.CheckSphere(target.transform.position, 0.3f, mask))
-		// {
-		// 	transform.position = Vector3.Lerp(transform.position, target.transform.position, 1);
-		// }
-		// else if (Physics.SphereCast(target.transform.position, 0.3f, (transform.position - target.transform.position).normalized, out hit, distance, mask))
-		// {
-		// 	transform.position = target.transform.position + (transform.position - target.transform.position).normalized * hit.distance;
-		// }
-		// else
-		// {
-		// 	transform.localPosition = Vector3.Lerp(transform.localPosition, position, 1);
-		// }
+		oldHitList = hitList;
 	}
 }
