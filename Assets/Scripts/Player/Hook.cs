@@ -32,7 +32,7 @@ public class Hook : MonoBehaviour
 		joint = player.gameObject.AddComponent<SpringJoint>();
 		joint.autoConfigureConnectedAnchor = false;
 		joint.connectedAnchor = targetPosition;
-		joint.maxDistance = getHookLength();
+		joint.maxDistance = getWireLength();
 		joint.minDistance = 0;
 		joint.spring = 4.5f;
 		joint.damper = 7f;
@@ -48,7 +48,21 @@ public class Hook : MonoBehaviour
 		Destroy(joint);
 	}
 
-	public float getHookLength()
+	public void LilleWire(float lilleLength)
+	{
+		if (joint == null)
+		{
+			return;
+		}
+
+		if (joint.maxDistance - lilleLength > 0)
+		{
+			joint.maxDistance -= lilleLength;
+			Debug.Log("LilleWire: " + joint.maxDistance);
+		}
+	}
+
+	public float getWireLength()
 	{
 		return Vector3.Distance(player.transform.position, targetPosition);
 	}
@@ -74,15 +88,15 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-				break;
+			break;
 			case HookState.Hooking:
-				break;
+			break;
 			case HookState.Hooked:
-				lineRenderer.SetPosition(0, player.transform.position);
-				lineRenderer.SetPosition(1, targetPosition);
-				break;
+			lineRenderer.SetPosition(0, player.transform.position);
+			lineRenderer.SetPosition(1, targetPosition);
+			break;
 			default:
-				break;
+			break;
 		}
 	}
 
@@ -91,13 +105,13 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-				break;
+			break;
 			case HookState.Hooking:
-				break;
+			break;
 			case HookState.Hooked:
-				break;
+			break;
 			default:
-				break;
+			break;
 		}
 	}
 

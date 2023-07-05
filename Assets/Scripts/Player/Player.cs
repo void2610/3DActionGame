@@ -67,7 +67,6 @@ public class Player : MonoBehaviour
 			leftHookInput = false;
 			leftHookInputDown = true;
 		}
-
 		else if (Input.GetKey(KeyCode.Q))
 		{
 			leftHookInputUp = false;
@@ -87,7 +86,6 @@ public class Player : MonoBehaviour
 			rightHookInput = false;
 			rightHookInputDown = true;
 		}
-
 		else if (Input.GetKey(KeyCode.E))
 		{
 			rightHookInputUp = false;
@@ -99,6 +97,13 @@ public class Player : MonoBehaviour
 			rightHookInputUp = true;
 			rightHookInput = false;
 			rightHookInputDown = false;
+		}
+
+		//マウスホイールでのフックの長さ調整
+		if (Input.GetAxis("Mouse ScrollWheel") < 0)
+		{
+			leftHook.LilleWire(10f);
+			rightHook.LilleWire(10f);
 		}
 	}
 
