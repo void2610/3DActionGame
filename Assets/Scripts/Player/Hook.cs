@@ -92,7 +92,7 @@ public class Hook : MonoBehaviour
 			case HookState.Hooking:
 			break;
 			case HookState.Hooked:
-			lineRenderer.SetPosition(0, player.transform.position);
+			lineRenderer.SetPosition(0, this.transform.position);
 			lineRenderer.SetPosition(1, targetPosition);
 			break;
 			default:
