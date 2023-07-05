@@ -8,6 +8,12 @@ public class Player : MonoBehaviour
 	public float targetAngle;
 	[SerializeField]
 	private GameObject camera;
+	[SerializeField]
+	private Hook leftHook;
+	[SerializeField]
+	private Hook rightHook;
+	[SerializeField]
+	private LayerMask hookableLayer;
 	private Rigidbody rb;
 	private const float SPEED = 13f;
 	private const float AIRSPEED = 9;
@@ -19,8 +25,7 @@ public class Player : MonoBehaviour
 	private bool leftHookInput = false;
 	private bool leftHookInputUp = false;
 	private bool rightHookInputUp = false;
-	private Hook leftHook;
-	private Hook rightHook;
+
 
 	public float getCameraDirection()
 	{
@@ -30,13 +35,13 @@ public class Player : MonoBehaviour
 	public Vector3 getHookPoint()
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 1000f))
+		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 100f, hookableLayer))
 		{
 			return hit.point;
 		}
 		else
 		{
-			return camera.transform.position + camera.transform.forward * 1000f;
+			return Vector3.zero;
 		}
 	}
 
@@ -178,9 +183,6 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
-		leftHook = new Hook();
-		rightHook = new Hook();
-
 		rb = GetComponent<Rigidbody>();
 		rb.velocity = Vector3.zero;
 	}
@@ -200,7 +202,7 @@ public class Player : MonoBehaviour
 
 		if (leftHookInputDown)
 		{
-			leftHook.SetHook(getHookPoint());
+			leftHook.SetHook(getHookPoint(), this.gameObject);
 		}
 		else if (leftHookInputUp)
 		{
@@ -208,7 +210,7 @@ public class Player : MonoBehaviour
 		}
 		if (rightHookInputDown)
 		{
-			rightHook.SetHook(getHookPoint());
+			rightHook.SetHook(getHookPoint(), this.gameObject);
 		}
 		else if (rightHookInputUp)
 		{

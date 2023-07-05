@@ -8,15 +8,7 @@ public class Hook : MonoBehaviour
 	{
 		get; private set;
 	}
-	public Vector3 position
-	{
-		get; private set;
-	}
 	public Vector3 targetPosition
-	{
-		get; private set;
-	}
-	public bool isLeft
 	{
 		get; private set;
 	}
@@ -24,44 +16,36 @@ public class Hook : MonoBehaviour
 	{
 		get; private set;
 	} = HookState.Disabled;
-	public const float tension = 1f;
-	public const float maxDistance = 10f;
 
 	public SpringJoint joint;
 	public LineRenderer lineRenderer;
 
-	public void SetHook(Vector3 target)
+	public void SetHook(Vector3 target, GameObject player)
 	{
-		targetPosition = target;
+		if (target == Vector3.zero)
+		{
+			return;
+		}
 
-		lineRenderer = this.gameObject.AddComponent<LineRenderer>();
-		lineRenderer.startWidth = 0.1f;
-		lineRenderer.endWidth = 0.1f;
-		lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-		lineRenderer.startColor = Color.black;
-		lineRenderer.endColor = Color.black;
-
-
-		joint = this.gameObject.AddComponent<SpringJoint>();
+		this.player = player;
+		this.targetPosition = target;
+		joint = player.gameObject.AddComponent<SpringJoint>();
 		joint.autoConfigureConnectedAnchor = false;
+		joint.connectedAnchor = targetPosition;
+		joint.maxDistance = getHookLength();
+		joint.minDistance = 0;
 		joint.spring = 4.5f;
 		joint.damper = 7f;
-
-		// joint.connectedBody = player.GetComponent<Rigidbody>();
-		// joint.connectedAnchor = Vector3.zero;
-
-		joint.maxDistance = getHookLength() * 0.08f;
-		joint.minDistance = getHookLength() * 0.25f;
-
+		joint.massScale = 4.5f;
+		lineRenderer.positionCount = 2;
 		state = HookState.Hooked;
 	}
 
 	public void DisableHook()
 	{
 		state = HookState.Disabled;
-		joint.connectedBody = null;
+		lineRenderer.positionCount = 0;
 		Destroy(joint);
-		Destroy(lineRenderer);
 	}
 
 	public float getHookLength()
@@ -69,9 +53,20 @@ public class Hook : MonoBehaviour
 		return Vector3.Distance(player.transform.position, targetPosition);
 	}
 
-	void Start()
+	public void setLineRenderer()
 	{
 
+	}
+
+	void Start()
+	{
+		lineRenderer = this.gameObject.AddComponent<LineRenderer>();
+		lineRenderer.startWidth = 0.1f;
+		lineRenderer.endWidth = 0.1f;
+		lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+		lineRenderer.startColor = Color.black;
+		lineRenderer.endColor = Color.black;
+		DisableHook();
 	}
 
 	void Update()
@@ -79,8 +74,6 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-				lineRenderer.SetPosition(0, player.transform.position);
-				lineRenderer.SetPosition(1, player.transform.position);
 				break;
 			case HookState.Hooking:
 				break;
