@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 	private GameObject camera;
 	private Rigidbody rb;
 	private const float SPEED = 13f;
-	private const float AIRSPEED = 8;
+	private const float AIRSPEED = 9;
 	private int forward = 0;
 	private int right = 0;
 	private bool rightHookInputDown = false;
@@ -30,13 +30,13 @@ public class Player : MonoBehaviour
 	public Vector3 getHookPoint()
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 100f))
+		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, 1000f))
 		{
 			return hit.point;
 		}
 		else
 		{
-			return camera.transform.position + camera.transform.forward * 100f;
+			return camera.transform.position + camera.transform.forward * 1000f;
 		}
 	}
 
@@ -144,7 +144,7 @@ public class Player : MonoBehaviour
 	{
 		if (Input.GetKey(KeyCode.Space))
 		{
-			rb.AddForce(Vector3.up * AIRSPEED * 1.6f);
+			rb.AddForce(Vector3.up * AIRSPEED);
 		}
 		if (Input.GetKey(KeyCode.LeftShift))
 		{
@@ -178,8 +178,8 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
-		leftHook = Hook.CreateHook(this.gameObject, true);
-		rightHook = Hook.CreateHook(this.gameObject, false);
+		leftHook = new Hook();
+		rightHook = new Hook();
 
 		rb = GetComponent<Rigidbody>();
 		rb.velocity = Vector3.zero;
