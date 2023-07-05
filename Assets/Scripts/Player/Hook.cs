@@ -50,6 +50,11 @@ public class Hook : MonoBehaviour
 		state = HookState.Hooked;
 	}
 
+	public void DisableHook()
+	{
+		state = HookState.Disabled;
+	}
+
 	void Start()
 	{
 

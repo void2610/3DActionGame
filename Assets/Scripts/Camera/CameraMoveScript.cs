@@ -85,7 +85,6 @@ public class CameraMoveScript : MonoBehaviour
 			//lookAtに近づきすぎたらtargetを半透明にする
 			if (Vector3.Distance(lookAt, hit.point) < minDistance)
 			{
-				Debug.Log("近づきすぎ");
 				target.GetComponent<Renderer>().material.color = new Color(playerColor.r, playerColor.g, playerColor.b, 0.2f);
 			}
 			else

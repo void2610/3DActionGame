@@ -13,8 +13,12 @@ public class Player : MonoBehaviour
 	private const float AIRSPEED = 8;
 	private int forward = 0;
 	private int right = 0;
+	private bool rightHookInputDown = false;
+	private bool leftHookInputDown = false;
 	private bool rightHookInput = false;
 	private bool leftHookInput = false;
+	private bool leftHookInputUp = false;
+	private bool rightHookInputUp = false;
 	private Hook leftHook;
 	private Hook rightHook;
 
@@ -52,21 +56,44 @@ public class Player : MonoBehaviour
 
 	public void CheckHookInput()
 	{
-		if (Input.GetKey(KeyCode.Q))
+		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			leftHookInput = true;
-		}
-		else
-		{
+			leftHookInputUp = false;
 			leftHookInput = false;
+			leftHookInputDown = true;
 		}
-		if (Input.GetKey(KeyCode.E))
+
+		else if (Input.GetKey(KeyCode.Q))
 		{
-			rightHookInput = true;
+			leftHookInputUp = false;
+			leftHookInput = true;
+			leftHookInputDown = false;
 		}
-		else
+		else if (Input.GetKeyUp(KeyCode.Q))
 		{
+			leftHookInputUp = true;
+			leftHookInput = false;
+			leftHookInputDown = false;
+		}
+
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			rightHookInputUp = false;
 			rightHookInput = false;
+			rightHookInputDown = true;
+		}
+
+		else if (Input.GetKey(KeyCode.E))
+		{
+			rightHookInputUp = false;
+			rightHookInput = true;
+			rightHookInputDown = false;
+		}
+		else if (Input.GetKeyUp(KeyCode.E))
+		{
+			rightHookInputUp = true;
+			rightHookInput = false;
+			rightHookInputDown = false;
 		}
 	}
 
@@ -171,13 +198,21 @@ public class Player : MonoBehaviour
 			isGrounded = false;
 		}
 
-		if (leftHookInput)
+		if (leftHookInputDown)
 		{
 			leftHook.SetHook(getHookPoint());
 		}
-		if (rightHookInput)
+		else if (leftHookInputUp)
+		{
+			leftHook.DisableHook();
+		}
+		if (rightHookInputDown)
 		{
 			rightHook.SetHook(getHookPoint());
+		}
+		else if (rightHookInputUp)
+		{
+			rightHook.DisableHook();
 		}
 	}
 
