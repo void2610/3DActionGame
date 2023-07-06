@@ -4,18 +4,9 @@ using UnityEngine;
 
 public class Hook : MonoBehaviour
 {
-	public GameObject player
-	{
-		get; private set;
-	}
-	public Vector3 targetPosition
-	{
-		get; private set;
-	}
-	public HookState state
-	{
-		get; private set;
-	} = HookState.Disabled;
+	public GameObject player;
+	public Vector3 targetPosition;
+	public HookState state = HookState.Disabled;
 
 	public SpringJoint joint;
 	public LineRenderer lineRenderer;
@@ -32,7 +23,7 @@ public class Hook : MonoBehaviour
 		joint = player.gameObject.AddComponent<SpringJoint>();
 		joint.autoConfigureConnectedAnchor = false;
 		joint.connectedAnchor = targetPosition;
-		joint.maxDistance = getWireLength();
+		joint.maxDistance = GetWireLength();
 		joint.minDistance = 0;
 		joint.spring = 4.5f;
 		joint.damper = 7f;
@@ -61,14 +52,9 @@ public class Hook : MonoBehaviour
 		}
 	}
 
-	public float getWireLength()
+	public float GetWireLength()
 	{
 		return Vector3.Distance(player.transform.position, targetPosition);
-	}
-
-	public void setLineRenderer()
-	{
-
 	}
 
 	void Start()
@@ -87,15 +73,15 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-			break;
+				break;
 			case HookState.Hooking:
-			break;
+				break;
 			case HookState.Hooked:
-			lineRenderer.SetPosition(0, this.transform.position);
-			lineRenderer.SetPosition(1, targetPosition);
-			break;
+				lineRenderer.SetPosition(0, this.transform.position);
+				lineRenderer.SetPosition(1, targetPosition);
+				break;
 			default:
-			break;
+				break;
 		}
 	}
 
@@ -104,13 +90,13 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-			break;
+				break;
 			case HookState.Hooking:
-			break;
+				break;
 			case HookState.Hooked:
-			break;
+				break;
 			default:
-			break;
+				break;
 		}
 	}
 

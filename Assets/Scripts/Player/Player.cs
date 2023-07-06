@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#pragma warning disable IDE0044
 
 public class Player : MonoBehaviour
 {
@@ -24,23 +25,22 @@ public class Player : MonoBehaviour
 	private float targetAngle;
 	private int forward = 0;
 	private int right = 0;
-	private bool rightHookInputDown = false;
-	private bool leftHookInputDown = false;
-	private bool rightHookInput = false;
-	private bool leftHookInput = false;
-	private bool leftHookInputUp = false;
-	private bool rightHookInputUp = false;
+	private readonly bool rightHookInputDown = false;
+	private readonly bool leftHookInputDown = false;
+	private readonly bool rightHookInput = false;
+	private readonly bool leftHookInput = false;
+	private readonly bool leftHookInputUp = false;
+	private readonly bool rightHookInputUp = false;
 
 
-	public float getCameraDirection()
+	public float GetCameraDirection()
 	{
 		return camera.transform.eulerAngles.y;
 	}
 
-	public Vector3 getHookPoint()
+	public Vector3 GetHookPoint()
 	{
-		RaycastHit hit;
-		if (Physics.Raycast(this.transform.position, camera.transform.forward, out hit, MAXDISTANCE, hookableLayer))
+		if (Physics.Raycast(this.transform.position, camera.transform.forward, out RaycastHit hit, MAXDISTANCE, hookableLayer))
 		{
 			return hit.point;
 		}
@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
-			leftHook.SetHook(getHookPoint(), this.gameObject);
+			leftHook.SetHook(GetHookPoint(), this.gameObject);
 		}
 		else if (Input.GetKey(KeyCode.Q))
 		{
@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.E))
 		{
-			rightHook.SetHook(getHookPoint(), this.gameObject);
+			rightHook.SetHook(GetHookPoint(), this.gameObject);
 		}
 		else if (Input.GetKey(KeyCode.E))
 		{
@@ -107,11 +107,11 @@ public class Player : MonoBehaviour
 	{
 		if (forward != 0 || right != 0)
 		{
-			return targetAngle = getCameraDirection() + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
+			return targetAngle = GetCameraDirection() + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
 		}
 		else
 		{
-			return targetAngle = getCameraDirection();
+			return targetAngle = GetCameraDirection();
 		}
 	}
 
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
 	}
 
 
-	public Vector3 getMoveDirection()
+	public Vector3 GetMoveDirection()
 	{
 		Vector3 cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
 		Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
@@ -233,12 +233,12 @@ public class Player : MonoBehaviour
 			if (forward == 1)
 			{
 				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetTargetAngle(), 0f), Time.deltaTime * 10f);
-				rb.velocity = getMoveDirection() * SPEED;
+				rb.velocity = GetMoveDirection() * SPEED;
 			}
 			else
 			{
-				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, getCameraDirection(), 0f), Time.deltaTime * 5f);
-				rb.velocity = getMoveDirection() * SPEED * 0.85f;
+				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetCameraDirection(), 0f), Time.deltaTime * 5f);
+				rb.velocity = GetMoveDirection() * SPEED * 0.85f;
 			}
 
 			if (Input.GetKey(KeyCode.Space))
@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
-			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, getCameraDirection(), 0f), Time.deltaTime * 10f);
+			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetCameraDirection(), 0f), Time.deltaTime * 10f);
 			InAirMovement();
 		}
 	}

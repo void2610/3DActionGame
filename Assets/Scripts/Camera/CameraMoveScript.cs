@@ -11,10 +11,10 @@ public class CameraMoveScript : MonoBehaviour
 	public float rotationSensitivity = 100f;// 感度
 
 	private float floorHeight = 0.0f;
-	private float minDistance = 3.8f;
+	private readonly float minDistance = 3.8f;
 
 	private RaycastHit hit;
-	private RaycastHit[] hitList;
+	private readonly RaycastHit[] hitList;
 	private RaycastHit[] oldHitList = { new RaycastHit() };
 
 	private Vector3 position;
@@ -62,22 +62,6 @@ public class CameraMoveScript : MonoBehaviour
 
 		// カメラを横にずらして中央を開ける
 		transform.position = transform.position + transform.right * slideDistanceM;
-
-		// //めり込んだオブジェクトを透過する
-		// foreach (RaycastHit hit in oldHitList)
-		// {
-		// 	if (hit.collider != null)
-		// 	{
-		// 		hit.collider.gameObject.GetComponent<Renderer>().enabled = true;
-		// 	}
-		// }
-
-		// hitList = Physics.RaycastAll(lookAt, transform.position - lookAt, distanceToPlayerM, playerMask);
-		// foreach (RaycastHit hit in hitList)
-		// {
-		// 	hit.collider.gameObject.GetComponent<Renderer>().enabled = false;
-		// }
-
 
 		//めり込みそうなオブジェクトの手前にカメラを移動させる
 		if (Physics.Linecast(lookAt, transform.position, out hit, playerMask))
