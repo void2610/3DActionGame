@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private LayerMask hookableLayer;
 
-
 	private Rigidbody rb;
 	private const float SPEED = 13f;
 	private const float AIRSPEED = 9;
@@ -64,7 +63,7 @@ public class Player : MonoBehaviour
 			right = 1;
 	}
 
-	public void CheckHookInput()
+	private void CheckHookInput()
 	{
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
@@ -148,44 +147,47 @@ public class Player : MonoBehaviour
 		return Vector3.Lerp(rb.velocity / SPEED, targetDirection, 0.2f);
 	}
 
-	private void InAirMovement()
-	{
-		Vector3 particleDirection = Vector3.zero;
+	public Vector3 GetGasDirection(){
+		Vector3 direction = Vector3.zero;
 		if (Input.GetKey(KeyCode.Space))
 		{
-			rb.AddForce(Vector3.up * AIRSPEED);
-			particleDirection += Vector3.up;
+			direction += Vector3.up;
 		}
 		if (Input.GetKey(KeyCode.LeftShift))
 		{
-			rb.AddForce(Vector3.down * AIRSPEED);
-			particleDirection += Vector3.down;
+			direction += Vector3.down;
 		}
 		if (Input.GetKey(KeyCode.W))
 		{
-			rb.AddForce(this.transform.forward * AIRSPEED);
-			particleDirection += this.transform.forward;
+			direction += this.transform.forward;
 		}
 		if (Input.GetKey(KeyCode.S))
 		{
-			rb.AddForce(this.transform.forward * -AIRSPEED);
-			particleDirection += this.transform.forward * -1f;
+			direction += this.transform.forward * -1f;
 		}
 		if (Input.GetKey(KeyCode.A))
 		{
-			rb.AddForce(this.transform.right * -AIRSPEED);
-			particleDirection += this.transform.right * -1f;
+			direction += this.transform.right * -1f;
 		}
 		if (Input.GetKey(KeyCode.D))
 		{
-			rb.AddForce(this.transform.right * AIRSPEED);
-			particleDirection += this.transform.right;
+			direction += this.transform.right;
 		}
 
-		if (particleDirection != Vector3.zero)
+		return direction;
+	}
+
+	private void InAirMovement()
+	{
+		Vector3 d = GetGasDirection();
+		if(Input.GetKey(KeyCode.LeftShift)){
+			GasMovement();
+		}
+
+		if (d != Vector3.zero)
 		{
 			particleSystem.enableEmission = true;
-			particleSystem.transform.rotation = Quaternion.LookRotation(particleDirection);
+			particleSystem.transform.rotation = Quaternion.LookRotation(d);
 		}
 		else
 		{
@@ -199,6 +201,17 @@ public class Player : MonoBehaviour
 		{
 			rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
 		}
+	}
+
+	private void GasMovement()
+	{
+		if(leftHook.state == Hook.HookState.Disabled && rightHook.state == Hook.HookState.Disabled){
+			return;
+		}
+
+		rb.velocity = GetGasDirection() * AIRSPEED * 10f;
+		rightHook.SetWireLengthToPlayerDistance();
+		leftHook.SetWireLengthToPlayerDistance();
 	}
 
 	void Start()

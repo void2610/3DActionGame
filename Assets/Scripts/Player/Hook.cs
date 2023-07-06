@@ -41,12 +41,7 @@ public class Hook : MonoBehaviour
 
 	public void LilleWire(float lilleLength)
 	{
-		if (joint == null)
-		{
-			return;
-		}
-
-		if (joint.maxDistance - lilleLength > 0)
+		if (joint != null && joint.maxDistance - lilleLength > 0)
 		{
 			joint.maxDistance -= lilleLength;
 		}
@@ -55,6 +50,14 @@ public class Hook : MonoBehaviour
 	public float GetWireLength()
 	{
 		return Vector3.Distance(player.transform.position, targetPosition);
+	}
+
+	public void SetWireLengthToPlayerDistance()
+	{
+		if (joint != null)
+		{
+			joint.maxDistance = GetWireLength();
+		}
 	}
 
 	void Start()
