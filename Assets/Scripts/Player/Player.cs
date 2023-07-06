@@ -6,9 +6,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 	[SerializeField]
-	private GameObject camera;
+	private new GameObject camera;
 	[SerializeField]
-	private ParticleSystem particleSystem;
+	private new ParticleSystem particleSystem;
 	[SerializeField]
 	private Hook leftHook;
 	[SerializeField]
@@ -20,16 +20,14 @@ public class Player : MonoBehaviour
 	private const float SPEED = 13f;
 	private const float AIRSPEED = 9;
 	private const float MAXDISTANCE = 150f;
+	private const float MAXSPEED = 100f;
 	private bool isGrounded = true;
 	private float targetAngle;
 	private int forward = 0;
 	private int right = 0;
-	private readonly bool rightHookInputDown = false;
-	private readonly bool leftHookInputDown = false;
-	private readonly bool rightHookInput = false;
-	private readonly bool leftHookInput = false;
-	private readonly bool leftHookInputUp = false;
-	private readonly bool rightHookInputUp = false;
+	private Vector3 gasTargetPosition;
+	private bool isUsingGas = false;
+	private bool oldIsUsingGas = false;
 
 
 	public float GetCameraDirection()
@@ -102,6 +100,21 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	public void CheckGasInput()
+	{
+		if (Input.GetKeyDown(KeyCode.LeftShift))
+		{
+			isUsingGas = true;
+		}
+		else if (Input.GetKey(KeyCode.LeftShift))
+		{
+		}
+		else if (Input.GetKeyUp(KeyCode.LeftShift))
+		{
+			isUsingGas = false;
+		}
+	}
+
 	public float GetTargetAngle()
 	{
 		if (forward != 0 || right != 0)
@@ -147,15 +160,12 @@ public class Player : MonoBehaviour
 		return Vector3.Lerp(rb.velocity / SPEED, targetDirection, 0.2f);
 	}
 
-	public Vector3 GetGasDirection(){
+	public Vector3 GetGasDirection()
+	{
 		Vector3 direction = Vector3.zero;
 		if (Input.GetKey(KeyCode.Space))
 		{
 			direction += Vector3.up;
-		}
-		if (Input.GetKey(KeyCode.LeftShift))
-		{
-			direction += Vector3.down;
 		}
 		if (Input.GetKey(KeyCode.W))
 		{
@@ -180,18 +190,16 @@ public class Player : MonoBehaviour
 	private void InAirMovement()
 	{
 		Vector3 d = GetGasDirection();
-		if(Input.GetKey(KeyCode.LeftShift)){
-			GasMovement();
-		}
-
 		if (d != Vector3.zero)
 		{
-			particleSystem.enableEmission = true;
+			//particleSystem.enableEmission = true;
 			particleSystem.transform.rotation = Quaternion.LookRotation(d);
+			rb.AddForce(d * 1f * AIRSPEED);
 		}
 		else
 		{
-			particleSystem.enableEmission = false;
+			ParticleSystem.EmissionModule emission = particleSystem.emission;
+			emission.enabled = false;
 		}
 	}
 
@@ -203,15 +211,38 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	private void GasMovement()
+	private void SetGasTargetPosition()
 	{
-		if(leftHook.state == Hook.HookState.Disabled && rightHook.state == Hook.HookState.Disabled){
+		if (leftHook.state == Hook.HookState.Disabled && rightHook.state == Hook.HookState.Disabled)
+		{
 			return;
 		}
 
-		rb.velocity = GetGasDirection() * AIRSPEED * 10f;
-		rightHook.SetWireLengthToPlayerDistance();
-		leftHook.SetWireLengthToPlayerDistance();
+		Vector3 d = Vector3.zero;
+		if (leftHook.state == Hook.HookState.Hooked)
+		{
+			d += leftHook.GetTargetPosition() - this.transform.position;
+			leftHook.SetWireLength(0f);
+		}
+		if (rightHook.state == Hook.HookState.Hooked)
+		{
+			d += rightHook.GetTargetPosition() - this.transform.position;
+			rightHook.SetWireLength(0f);
+		}
+
+		gasTargetPosition = d;
+	}
+
+	private void GasMovement()
+	{
+		if (leftHook.state == Hook.HookState.Disabled && rightHook.state == Hook.HookState.Disabled)
+		{
+			return;
+		}
+
+		Vector3.Lerp(rb.velocity, rb.velocity + gasTargetPosition, 100f);
+		ParticleSystem.EmissionModule emission = particleSystem.emission;
+		emission.enabled = true;
 	}
 
 	void Start()
@@ -224,6 +255,7 @@ public class Player : MonoBehaviour
 	{
 		CheckMoveInput();
 		CheckHookInput();
+		CheckGasInput();
 		if (CheckGround())
 		{
 			isGrounded = true;
@@ -235,14 +267,12 @@ public class Player : MonoBehaviour
 	}
 
 
-
-	//地上ではキー操作方向を向く
-	//空中ではカメラ方向を向く
 	void FixedUpdate()
 	{
+		ParticleSystem.EmissionModule emission = particleSystem.emission;
+		emission.enabled = false;
 		if (isGrounded)
 		{
-			particleSystem.enableEmission = false;
 			if (forward == 1)
 			{
 				rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetTargetAngle(), 0f), Time.deltaTime * 10f);
@@ -264,5 +294,17 @@ public class Player : MonoBehaviour
 			rb.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(0f, GetCameraDirection(), 0f), Time.deltaTime * 10f);
 			InAirMovement();
 		}
+
+		if (isUsingGas && !oldIsUsingGas)
+		{
+			SetGasTargetPosition();
+			Debug.Log("SetGasTargetPosition");
+		}
+		if (isUsingGas)
+		{
+			GasMovement();
+		}
+
+		oldIsUsingGas = isUsingGas;
 	}
 }

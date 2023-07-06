@@ -35,8 +35,14 @@ public class Hook : MonoBehaviour
 	public void DisableHook()
 	{
 		state = HookState.Disabled;
+		targetPosition = Vector3.zero;
 		lineRenderer.positionCount = 0;
 		Destroy(joint);
+	}
+
+	public Vector3 GetTargetPosition()
+	{
+		return targetPosition;
 	}
 
 	public void LilleWire(float lilleLength)
@@ -52,11 +58,11 @@ public class Hook : MonoBehaviour
 		return Vector3.Distance(player.transform.position, targetPosition);
 	}
 
-	public void SetWireLengthToPlayerDistance()
+	public void SetWireLength(float length)
 	{
 		if (joint != null)
 		{
-			joint.maxDistance = GetWireLength();
+			joint.maxDistance = length;
 		}
 	}
 
@@ -76,15 +82,15 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-				break;
+			break;
 			case HookState.Hooking:
-				break;
+			break;
 			case HookState.Hooked:
-				lineRenderer.SetPosition(0, this.transform.position);
-				lineRenderer.SetPosition(1, targetPosition);
-				break;
+			lineRenderer.SetPosition(0, this.transform.position);
+			lineRenderer.SetPosition(1, targetPosition);
+			break;
 			default:
-				break;
+			break;
 		}
 	}
 
@@ -93,13 +99,13 @@ public class Hook : MonoBehaviour
 		switch (state)
 		{
 			case HookState.Disabled:
-				break;
+			break;
 			case HookState.Hooking:
-				break;
+			break;
 			case HookState.Hooked:
-				break;
+			break;
 			default:
-				break;
+			break;
 		}
 	}
 
