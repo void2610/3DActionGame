@@ -45,11 +45,11 @@ public class Hook : MonoBehaviour
 		return targetPosition;
 	}
 
-	public void LilleWire(float lilleLength)
+	public void ReelWire(float reelLength)
 	{
-		if (joint != null && joint.maxDistance - lilleLength > 0)
+		if (joint != null && joint.maxDistance - reelLength > 0)
 		{
-			joint.maxDistance -= lilleLength;
+			joint.maxDistance -= reelLength;
 		}
 	}
 

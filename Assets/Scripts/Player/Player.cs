@@ -90,13 +90,13 @@ public class Player : MonoBehaviour
 		//マウスホイールでのフックの長さ調整
 		if (Input.GetAxis("Mouse ScrollWheel") < 0)
 		{
-			leftHook.LilleWire(10f);
-			rightHook.LilleWire(10f);
+			leftHook.ReelWire(10f);
+			rightHook.ReelWire(10f);
 		}
 		else if (Input.GetAxis("Mouse ScrollWheel") > 0)
 		{
-			leftHook.LilleWire(-10f);
-			rightHook.LilleWire(-10f);
+			leftHook.ReelWire(-10f);
+			rightHook.ReelWire(-10f);
 		}
 	}
 
