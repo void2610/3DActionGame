@@ -298,7 +298,6 @@ public class Player : MonoBehaviour
 		if (isUsingGas && !oldIsUsingGas)
 		{
 			SetGasTargetPosition();
-			Debug.Log("SetGasTargetPosition");
 		}
 		if (isUsingGas)
 		{
