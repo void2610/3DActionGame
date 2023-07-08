@@ -233,6 +233,18 @@ public class Player : MonoBehaviour
 		gasTargetPosition = d;
 	}
 
+	private void StrongReelWire()
+	{
+		if (leftHook.state == Hook.HookState.Hooked)
+		{
+			leftHook.ReelWire(100f);
+		}
+		if (rightHook.state == Hook.HookState.Hooked)
+		{
+			rightHook.ReelWire(100f);
+		}
+	}
+
 	private void GasMovement()
 	{
 		if (leftHook.state == Hook.HookState.Disabled && rightHook.state == Hook.HookState.Disabled)
