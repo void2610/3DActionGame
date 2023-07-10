@@ -11,7 +11,7 @@ public class CameraMoveScript : MonoBehaviour
 	public float rotationSensitivity = 100f;// 感度
 
 	private float floorHeight = 0.0f;
-	private readonly float minDistance = 3.8f;
+	public float minDistance = 3.8f;
 
 	private RaycastHit hit;
 	private readonly RaycastHit[] hitList;
