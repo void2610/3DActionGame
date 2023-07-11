@@ -17,8 +17,12 @@ public class Player : MonoBehaviour
 	private LayerMask hookableLayer;
 
 	private Rigidbody rb;
-	private const float SPEED = 13f;
-	private const float AIRSPEED = 9;
+	[SerializeField]
+	private float SPEED = 13f;
+	[SerializeField]
+	private float AIRSPEED = 9;
+	[SerializeField]
+	private float JUMPSPEED = 10f;
 	private const float MAXDISTANCE = 150f;
 	private const float MAXSPEED = 100f;
 	private bool isGrounded = true;
@@ -207,7 +211,7 @@ public class Player : MonoBehaviour
 	{
 		if (CheckGround())
 		{
-			rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+			rb.AddForce(Vector3.up * JUMPSPEED, ForceMode.Impulse);
 		}
 	}
 
