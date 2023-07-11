@@ -233,6 +233,19 @@ public class Player : MonoBehaviour
 		gasTargetPosition = d;
 	}
 
+	private void ResetGasTargetPosition()
+	{
+		gasTargetPosition = Vector3.zero;
+		if (leftHook.state == Hook.HookState.Hooked)
+		{
+			leftHook.SetWireLength(leftHook.GetWireLength());
+		}
+		if (rightHook.state == Hook.HookState.Hooked)
+		{
+			rightHook.SetWireLength(rightHook.GetWireLength());
+		}
+	}
+
 	private void StrongReelWire()
 	{
 		if (leftHook.state == Hook.HookState.Hooked)
@@ -252,7 +265,8 @@ public class Player : MonoBehaviour
 			return;
 		}
 
-		Vector3.Lerp(rb.velocity, rb.velocity + gasTargetPosition, 100f);
+		//Vector3.Lerp(rb.velocity, rb.velocity + gasTargetPosition, 100f);
+		rb.AddForce(gasTargetPosition * 10);
 		ParticleSystem.EmissionModule emission = particleSystem.emission;
 		emission.enabled = true;
 	}
@@ -314,6 +328,10 @@ public class Player : MonoBehaviour
 		if (isUsingGas)
 		{
 			GasMovement();
+		}
+		if (!isUsingGas && oldIsUsingGas)
+		{
+			ResetGasTargetPosition();
 		}
 
 		oldIsUsingGas = isUsingGas;
