@@ -297,6 +297,8 @@ public class Player : MonoBehaviour
 	}
 
 
+
+
 	void FixedUpdate()
 	{
 		ParticleSystem.EmissionModule emission = particleSystem.emission;
